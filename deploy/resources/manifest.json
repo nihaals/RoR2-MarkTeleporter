@@ -1,0 +1,9 @@
+{
+    "name": "MarkTeleporter",
+    "version_number": "0.0.1",
+    "website_url": "https://github.com/OrangutanGaming/RoR2-MarkTeleporter",
+    "description": "Mark Teleporter marks the teleporter.",
+    "dependencies": [
+        "bbepis-BepInExPack-1.3.1"
+    ]
+}
