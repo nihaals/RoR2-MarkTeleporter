@@ -1,33 +1,82 @@
 ﻿using BepInEx;
+using Frogtown;
 using RoR2;
 using UnityEngine;
 
 namespace MarkTeleporter
 {
-    [BepInPlugin("com.orangutan.markteleporter", "MarkTeleporter", "0.0.1")]
-
+    [BepInDependency("com.frogtown.shared")]
+    [BepInPlugin("com.orangutan.markteleporter", "MarkTeleporter", "1.0.0")]
     public class MarkTeleporter : BaseUnityPlugin
     {
-        public void Update()
+        public FrogtownModDetails modDetails;
+        GameObject _teleporterPositionIndicator;
+
+        public void Awake()
         {
-            var teleporter = TeleporterInteraction.instance;
-                if (teleporter == null)
-                    return;
-                var poi = teleporter.gameObject.GetComponent<TeleporterIndicator>();
-                if (poi == null)
-                    teleporter.gameObject.AddComponent<TeleporterIndicator>();
+            modDetails = new FrogtownModDetails("com.orangutan.markteleporter")
+            {
+                description = "Marks the teleporter.",
+                githubAuthor = "OrangutanGaming",
+                githubRepo = "RoR2-MarkTeleporter",
+                thunderstoreFullName = "OrangutanGaming-MarkTeleporter",
+            };
+            FrogtownShared.RegisterMod(modDetails);
+
+            On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
+            {
+                orig(self);
+                var prefab =
+                    Resources.Load<GameObject>("Prefabs/PositionIndicators/TeleporterChargingPositionIndicator");
+                _teleporterPositionIndicator = Instantiate(prefab, TeleporterInteraction.instance.transform.position,
+                    Quaternion.identity);
+                _teleporterPositionIndicator.GetComponent<PositionIndicator>().targetTransform =
+                    TeleporterInteraction.instance.transform;
+                _teleporterPositionIndicator.GetComponent<RoR2.UI.ChargeIndicatorController>().isCharged = true;
+            };
+
+            Chat.AddMessage("Awake");
         }
 
-        class TeleporterIndicator : BaseUnityPlugin
+        public void Update()
         {
-            GameObject _teleporterPositionIndicator;
-            private void Awake()
+            if (!modDetails.enabled)
             {
-                var prefab = Resources.Load<GameObject>("Prefabs/PositionIndicators/TeleporterChargingPositionIndicator");
-                _teleporterPositionIndicator = Instantiate(prefab, TeleporterInteraction.instance.transform.position, Quaternion.identity);
-                _teleporterPositionIndicator.GetComponent<PositionIndicator>().targetTransform = TeleporterInteraction.instance.transform;
-                _teleporterPositionIndicator.GetComponent<RoR2.UI.ChargeIndicatorController>().isCharged = true;
+                if (_teleporterPositionIndicator)
+                {
+                    GameObject.Destroy(_teleporterPositionIndicator);
+                }
             }
+            else
+            {
+                if (!_teleporterPositionIndicator)
+                {
+                    var prefab =
+                        Resources.Load<GameObject>("Prefabs/PositionIndicators/TeleporterChargingPositionIndicator");
+                    _teleporterPositionIndicator = Instantiate(prefab,
+                        TeleporterInteraction.instance.transform.position,
+                        Quaternion.identity);
+                    _teleporterPositionIndicator.GetComponent<PositionIndicator>().targetTransform =
+                        TeleporterInteraction.instance.transform;
+                    _teleporterPositionIndicator.GetComponent<RoR2.UI.ChargeIndicatorController>().isCharged = true;
+                }
+            }
+
+            var teleporter = TeleporterInteraction.instance;
+            if (teleporter == null)
+                return;
+            var poi = teleporter.gameObject.GetComponent<MarkTeleporter>();
+            if (!modDetails.enabled)
+            {
+                if (poi)
+                {
+                    Destroy(poi);
+                    return;
+                }
+            }
+
+            if (poi == null)
+                teleporter.gameObject.AddComponent<MarkTeleporter>();
         }
     }
 }

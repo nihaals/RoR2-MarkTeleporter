@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,6 +13,9 @@
     </Reference>
     <Reference Include="Facepunch.Steamworks">
       <HintPath>..\libs\Facepunch.Steamworks.dll</HintPath>
+    </Reference>
+    <Reference Include="FrogtownShared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\libs\FrogtownShared.dll</HintPath>
     </Reference>
     <Reference Include="KdTreeLib">
       <HintPath>..\libs\KdTreeLib.dll</HintPath>
