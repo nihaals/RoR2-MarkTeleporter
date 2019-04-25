@@ -6,7 +6,7 @@ using UnityEngine;
 namespace MarkTeleporter
 {
     [BepInDependency("com.frogtown.shared")]
-    [BepInPlugin("com.orangutan.markteleporter", "MarkTeleporter", "1.0.0")]
+    [BepInPlugin("com.orangutan.markteleporter", "MarkTeleporter", "1.0.1")]
     public class MarkTeleporter : BaseUnityPlugin
     {
         public FrogtownModDetails modDetails;
@@ -34,8 +34,6 @@ namespace MarkTeleporter
                     TeleporterInteraction.instance.transform;
                 _teleporterPositionIndicator.GetComponent<RoR2.UI.ChargeIndicatorController>().isCharged = true;
             };
-
-            Chat.AddMessage("Awake");
         }
 
         public void Update()
